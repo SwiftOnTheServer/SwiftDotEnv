@@ -15,6 +15,9 @@ But it is not always practical to set environment variables on development machi
 
 Install using [Swift Package Manager](https://swift.org/package-manager/).
 
+## Swift version
+
+This module has been tested with `DEVELOPMENT-SNAPSHOT-2016-07-25-a`.
 
 ## Usage
 
