@@ -17,7 +17,7 @@ Install using [Swift Package Manager](https://swift.org/package-manager/).
 
 ## Swift version
 
-This module has been tested with `DEVELOPMENT-SNAPSHOT-2016-07-25-a`.
+This module has been tested with Swift version `3.0`.
 
 ## Usage
 

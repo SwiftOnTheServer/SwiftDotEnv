@@ -21,7 +21,7 @@ public struct DotEnv {
         let path = getAbsolutePath(relativePath: "/\(filename)", useFallback: false)
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
 
-            let lines = String(contents).characters.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
+            let lines = String(describing: contents).characters.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
             for line in lines {
                 // ignore comments
                 if line[line.startIndex] == "#" {
@@ -31,13 +31,8 @@ public struct DotEnv {
                 // extract key and value which are separated by an equals sign
                 let parts = line.characters.split(separator: "=", maxSplits: 1).map(String.init)
 
-                #if os(Linux)
-                let key = parts[0].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines())
-                var value = parts[1].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines())
-                #else
                 let key = parts[0].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                 var value = parts[1].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
-                #endif
 
                 // remove surrounding quotes from value & convert remove escape character before any embedded quotes
                 if value[value.startIndex] == "\"" && value[value.index(before: value.endIndex)] == "\"" {
@@ -100,11 +95,7 @@ public struct DotEnv {
 
     // Open
     public func all() -> [String: String] {
-        #if os(Linux)
-        return ProcessInfo.processInfo().environment
-        #else
         return ProcessInfo.processInfo.environment
-        #endif
     }
 
     ///
@@ -117,11 +108,7 @@ public struct DotEnv {
         let toRootDir = components[0..<components.count - 5]
         var filePath = "/" + toRootDir.joined(separator: "/") + relativePath
 
-        #if os(Linux)
-        let fileManager = FileManager.default()
-        #else
         let fileManager = FileManager.default
-        #endif
 
         if fileManager.fileExists(atPath: filePath) {
             return filePath
