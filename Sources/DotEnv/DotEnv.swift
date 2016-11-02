@@ -28,6 +28,11 @@ public struct DotEnv {
                     continue
                 }
 
+                // ignore lines that appear empty 
+                if line.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines).isEmpty {
+                    continue
+                }
+
                 // extract key and value which are separated by an equals sign
                 let parts = line.characters.split(separator: "=", maxSplits: 1).map(String.init)
 
