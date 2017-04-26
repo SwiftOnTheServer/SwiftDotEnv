@@ -27,15 +27,15 @@ import DotEnv
 let env = DotEnv(withFile: ".env")
 
 let host = env.get("DB_HOST") ?? "localhost"
-let port = env.getInt("DB_PORT") ?? 3306
-let isEnabled = env.getBool("IS_ENABLED") ?? true
+let port = env.getAsInt("DB_PORT") ?? 3306
+let isEnabled = env.getAsBool("IS_ENABLED") ?? true
 ```
 
 There are three getter methods: 
 
 * `get()` returns a `String?`
-* `getInt()` returns an `Int?`
-* `getBool()` returns a `Bool?` where case-insensitive `"true"`, `"yes"` and `"1"` evaluate to `true`
+* `getAsInt()` returns an `Int?`
+* `getAsBool()` returns a `Bool?` where case-insensitive `"true"`, `"yes"` and `"1"` evaluate to `true`
 
 You can also use subscript access to retrieve the string version:
 

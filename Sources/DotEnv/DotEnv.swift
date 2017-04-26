@@ -110,7 +110,12 @@ public struct DotEnv {
     private func getAbsolutePath(relativePath: String, useFallback: Bool = true) -> String? {
         let thisFile = #file
         let components = thisFile.characters.split(separator: "/").map(String.init)
+        #if swift(>=3.1)
+        let toRootDir = components[0..<components.count - 6]
+        #else
         let toRootDir = components[0..<components.count - 5]
+        #endif
+
         var filePath = "/" + toRootDir.joined(separator: "/") + relativePath
 
         let fileManager = FileManager.default
