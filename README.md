@@ -31,6 +31,14 @@ let port = env.getAsInt("DB_PORT") ?? 3306
 let isEnabled = env.getAsBool("IS_ENABLED") ?? true
 ```
 
+An example `.env` file would be:
+
+```
+DB_HOST=test.com
+DB_PORT=1234
+IS_ENABLED=0
+```
+
 There are three getter methods: 
 
 * `get()` returns a `String?`
