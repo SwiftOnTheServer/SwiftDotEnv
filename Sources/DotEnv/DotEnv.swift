@@ -18,7 +18,7 @@ public struct DotEnv {
     ///
     public func loadDotEnvFile(filename: String) {
 
-        let path = getAbsolutePath(relativePath: "/\(filename)", useFallback: false)
+        let path = getAbsolutePath(relativePath: "/\(filename)")
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
 
             let lines = String(describing: contents).characters.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
@@ -104,33 +104,15 @@ public struct DotEnv {
     }
 
     ///
-    /// Determine route path of project. This assumes we're installed via SwiftPM and that
-    /// this library is in the Packages subdirectory, so it's a bit fragile!
+    /// Determine absolute path of the given argument relative to the current
+    /// directory
     ///
-    private func getAbsolutePath(relativePath: String, useFallback: Bool = true) -> String? {
-        let thisFile = #file
-        let components = thisFile.characters.split(separator: "/").map(String.init)
-        #if swift(>=3.1)
-        let toRootDir = components[0..<components.count - 6]
-        #else
-        let toRootDir = components[0..<components.count - 5]
-        #endif
-
-        var filePath = "/" + toRootDir.joined(separator: "/") + relativePath
-
+    private func getAbsolutePath(relativePath: String) -> String? {
         let fileManager = FileManager.default
-
+        let currentPath = fileManager.currentDirectoryPath
+        let filePath = currentPath + relativePath
         if fileManager.fileExists(atPath: filePath) {
             return filePath
-        } else if useFallback {
-            // Look in the current directory instead
-            let currentPath = fileManager.currentDirectoryPath
-            filePath = currentPath + relativePath
-            if fileManager.fileExists(atPath: filePath) {
-                return filePath
-            } else {
-                return nil
-            }
         } else {
             return nil
         }
