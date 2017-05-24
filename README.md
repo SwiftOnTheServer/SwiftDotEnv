@@ -53,6 +53,8 @@ let host = env["DB_HOST"] ?? "localhost"
 
 As a convenience, you can use `env.all()` to retrieve all environment variables.
 
+Note that the `.env` file is referenced relative to the directory where the binary is executed from.
+
 
 ## Caveats
 
