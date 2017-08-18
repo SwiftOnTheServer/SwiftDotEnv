@@ -45,6 +45,7 @@ public struct DotEnv {
                     value.remove(at: value.index(before: value.endIndex))
                     value = value.replacingOccurrences(of:"\\\"", with: "\"")
                 }
+                value = evaluate(variable: value)
                 setenv(key, value, 1)
             }
         }
@@ -101,6 +102,46 @@ public struct DotEnv {
     // Open
     public func all() -> [String: String] {
         return ProcessInfo.processInfo.environment
+    }
+
+    //
+    // Evaluate line by replacing referenes to other env variables with their values
+    //
+    private func evaluate(variable: String) -> String {
+        let regex : NSRegularExpression
+        do {
+            regex = try NSRegularExpression(pattern: "\\$([0-9a-zA-z_]+)")
+        } catch {
+            return variable
+        }
+
+        let matches = regex.matches(in: variable, options: [], range: NSMakeRange(0, variable.utf8.count))
+        let replacements = varReplacements(variable: variable, matches: matches)
+        var evaluated = variable as NSString
+
+        for i in replacements {
+            evaluated = evaluated.replacingOccurrences(of: i.key, with: i.value) as NSString
+        }
+
+        return evaluated as String
+    }
+
+    //
+    // Find var references and their values
+    //
+    private func varReplacements(variable: String, matches: [NSTextCheckingResult]) -> Dictionary<String, String> {
+      let interpolated = variable as NSString?
+      return matches.reduce(Dictionary<String,String>(), { result, m in
+        guard let match = interpolated?.substring(with: m.rangeAt(0)),
+              let key = interpolated?.substring(with: m.rangeAt(1)),
+              let envVar = get(key) else {
+            return result
+        }
+
+        var replacements = result
+        replacements[match] = envVar
+        return replacements
+      })
     }
 
     ///

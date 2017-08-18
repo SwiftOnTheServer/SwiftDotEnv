@@ -36,6 +36,7 @@ An example `.env` file would be:
 ```
 DB_HOST=test.com
 DB_PORT=1234
+DB_URL=postgresql://$DB_HOST:$DB_PORT
 IS_ENABLED=0
 ```
 
