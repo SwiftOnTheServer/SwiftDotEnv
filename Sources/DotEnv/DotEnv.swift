@@ -6,6 +6,26 @@ import Foundation
     import Darwin
 #endif
 
+extension String {
+    //
+    // Add replacingOccurrences which supports passing regex and closure for transformation
+    //
+    func replacingOccurrences(of regexp: NSRegularExpression, with transform: ([String]) -> String) -> String {
+        var replaced = self
+        while let match = regexp.firstMatch(in: replaced,
+                                            options: [],
+                                            range: NSMakeRange(0, replaced.utf8.count)) {
+            let replacing = replaced as NSString
+            let groups : [String] = (1..<match.numberOfRanges).map { index in
+                return replacing.substring(with: match.rangeAt(index))
+            }
+            let toReplace = replacing.substring(with: match.rangeAt(0))
+            let replaceWith = transform(groups)
+            replaced = replaced.replacingOccurrences(of: toReplace, with: replaceWith)
+        }
+        return replaced
+    }
+}
 
 public struct DotEnv {
 
@@ -45,7 +65,7 @@ public struct DotEnv {
                     value.remove(at: value.index(before: value.endIndex))
                     value = value.replacingOccurrences(of:"\\\"", with: "\"")
                 }
-                value = evaluate(variable: value)
+                value = evaluate(value)
                 setenv(key, value, 1)
             }
         }
@@ -105,43 +125,18 @@ public struct DotEnv {
     }
 
     //
-    // Evaluate line by replacing referenes to other env variables with their values
+    // Evaluate value by replacing referenes to other env variables with their values
     //
-    private func evaluate(variable: String) -> String {
-        let regex : NSRegularExpression
-        do {
-            regex = try NSRegularExpression(pattern: "\\$([0-9a-zA-z_]+)")
-        } catch {
-            return variable
+    private func evaluate(_ value: String) -> String {
+        let regex = try! NSRegularExpression(pattern: "\\$([0-9a-zA-z_]+)")
+        return value.replacingOccurrences(of: regex) { groups in
+            if let name = groups.first,
+               let value = get(name) {
+                return value
+            } else {
+                return ""
+            }
         }
-
-        let matches = regex.matches(in: variable, options: [], range: NSMakeRange(0, variable.utf8.count))
-        let replacements = varReplacements(variable: variable, matches: matches)
-        var evaluated = variable as NSString
-
-        for i in replacements {
-            evaluated = evaluated.replacingOccurrences(of: i.key, with: i.value) as NSString
-        }
-
-        return evaluated as String
-    }
-
-    //
-    // Find var references and their values
-    //
-    private func varReplacements(variable: String, matches: [NSTextCheckingResult]) -> Dictionary<String, String> {
-      let interpolated = variable as NSString?
-      return matches.reduce(Dictionary<String,String>(), { result, m in
-        guard let match = interpolated?.substring(with: m.rangeAt(0)),
-              let key = interpolated?.substring(with: m.rangeAt(1)),
-              let envVar = get(key) else {
-            return result
-        }
-
-        var replacements = result
-        replacements[match] = envVar
-        return replacements
-      })
     }
 
     ///
