@@ -1,6 +1,6 @@
 # SwiftDotEnv
 
-Swift 3 library that loads environment variables from `.env` into the environment inspired by the [Ruby dotenv][1] and [PHP dotenv][2] projects.
+Swift 4 library that loads environment variables from `.env` into the environment inspired by the [Ruby dotenv][1] and [PHP dotenv][2] projects.
 
 [1]: https://github.com/bkeepers/dotenv
 [2]: https://github.com/vlucas/phpdotenv
@@ -17,7 +17,7 @@ Install using [Swift Package Manager](https://swift.org/package-manager/).
 
 ## Swift version
 
-This module has been tested with Swift version `3.0` and `3.1`.
+Version 2 of this module has been tested with Swift `4.0`. Version 1 has been tested with Swift `3.0` and `3.1`.
 
 ## Usage
 
