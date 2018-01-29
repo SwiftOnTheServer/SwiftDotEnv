@@ -21,7 +21,7 @@ public struct DotEnv {
         let path = getAbsolutePath(relativePath: "/\(filename)")
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
 
-            let lines = String(describing: contents).characters.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
+            let lines = String(describing: contents).split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
             for line in lines {
                 // ignore comments
                 if line[line.startIndex] == "#" {
@@ -34,7 +34,7 @@ public struct DotEnv {
                 }
 
                 // extract key and value which are separated by an equals sign
-                let parts = line.characters.split(separator: "=", maxSplits: 1).map(String.init)
+                let parts = line.split(separator: "=", maxSplits: 1).map(String.init)
 
                 let key = parts[0].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
                 var value = parts[1].trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
