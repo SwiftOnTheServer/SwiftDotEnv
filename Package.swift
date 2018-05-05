@@ -4,6 +4,11 @@ import PackageDescription
 
 let package = Package(
     name: "SwiftDotEnv",
+    products: [
+        .library(
+            name: "SwiftDotEnv",
+            targets: ["DotEnv"]),
+    ],
     dependencies: [],
     targets: [
         .target(
