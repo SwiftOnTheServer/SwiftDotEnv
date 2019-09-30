@@ -9,16 +9,16 @@ import Foundation
 
 public struct DotEnv {
 
-    public init(withFile filename: String = ".env") {
-        loadDotEnvFile(filename: filename)
+    public init(withFile path: String = ".env") {
+        loadDotEnvFile(path: path)
     }
 
     ///
     /// Load .env file and put all the variables into the environment
     ///
-    public func loadDotEnvFile(filename: String) {
+    public func loadDotEnvFile(path: String) {
 
-        let path = getAbsolutePath(relativePath: "/\(filename)")
+        var path = path.starts(with: "/") ? path : getAbsolutePath(relativePath: "/\(path)")
         if let path = path, let contents = try? NSString(contentsOfFile: path, encoding: String.Encoding.utf8.rawValue) {
 
             let lines = String(describing: contents).split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
