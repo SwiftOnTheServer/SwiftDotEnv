@@ -1,5 +1,8 @@
 # SwiftDotEnv
 
+| :warning: This repository is archived as I'm no longer using Swift on Linux and so maintaining isn't appropriate. |
+| --- |
+
 Swift 4 library that loads environment variables from `.env` into the environment inspired by the [Ruby dotenv][1] and [PHP dotenv][2] projects.
 
 [1]: https://github.com/bkeepers/dotenv
