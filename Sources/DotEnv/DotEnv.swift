@@ -6,6 +6,26 @@ import Foundation
     import Darwin
 #endif
 
+extension String {
+    //
+    // Add replacingOccurrences which supports passing regex and closure for transformation
+    //
+    func replacingOccurrences(of regexp: NSRegularExpression, with transform: ([String]) -> String) -> String {
+        var replaced = self
+        while let match = regexp.firstMatch(in: replaced,
+                                            options: [],
+                                            range: NSMakeRange(0, replaced.utf8.count)) {
+            let replacing = replaced as NSString
+            let groups : [String] = (1..<match.numberOfRanges).map { index in
+                return replacing.substring(with: match.rangeAt(index))
+            }
+            let toReplace = replacing.substring(with: match.rangeAt(0))
+            let replaceWith = transform(groups)
+            replaced = replaced.replacingOccurrences(of: toReplace, with: replaceWith)
+        }
+        return replaced
+    }
+}
 
 public struct DotEnv {
 
@@ -45,6 +65,7 @@ public struct DotEnv {
                     value.remove(at: value.index(before: value.endIndex))
                     value = value.replacingOccurrences(of:"\\\"", with: "\"")
                 }
+                value = evaluate(value)
                 setenv(key, value, 1)
             }
         }
@@ -101,6 +122,21 @@ public struct DotEnv {
     // Open
     public func all() -> [String: String] {
         return ProcessInfo.processInfo.environment
+    }
+
+    //
+    // Evaluate value by replacing referenes to other env variables with their values
+    //
+    private func evaluate(_ value: String) -> String {
+        let regex = try! NSRegularExpression(pattern: "\\$([0-9a-zA-z_]+)")
+        return value.replacingOccurrences(of: regex) { groups in
+            if let name = groups.first,
+               let value = get(name) {
+                return value
+            } else {
+                return ""
+            }
+        }
     }
 
     ///
